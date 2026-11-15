@@ -1,0 +1,18 @@
+{
+  "name": "english-brain",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Warm paper pixel English practice site for local use.",
+  "type": "module",
+  "scripts": {
+    "dev": "node --experimental-sqlite scripts/local-server.mjs",
+    "start": "node --experimental-sqlite scripts/local-server.mjs",
+    "test": "node scripts/test-ui.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.55.0"
+  },
+  "engines": {
+    "node": ">=22.5"
+  }
+}

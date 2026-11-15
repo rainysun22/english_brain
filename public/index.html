@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1B1624">
+  <meta name="description" content="ENGLISH BRAIN · 每天 30 分钟，用课程方法真正练英语：阅读猜词、四词造句、听写、写作与描述。像素风训练场，接入 vocabulary.com 与 DeepSeek。">
+  <meta property="og:title" content="ENGLISH BRAIN // 每天用英语 30 分钟">
+  <meta property="og:description" content="Don't study English. Use it. 读、猜、造句、听写——不是看课程，是每天真的用英语。">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="/assets/preview-home.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/assets/fonts/fusion-pixel-12px.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/app.css">
+  <title>ENGLISH BRAIN // 英语大脑训练场</title>
+</head>
+<body>
+  <div class="boot" id="boot">
+    <div class="boot-inner">
+      <div class="boot-logo">ENGLISH BRAIN</div>
+      <div class="boot-line" id="boot-line">BOOTING THINK.OS ...</div>
+      <div class="boot-bar"><i></i></div>
+      <div class="boot-hint">DON'T TRANSLATE. THINK. // INSERT COIN</div>
+    </div>
+  </div>
+
+  <div class="shell">
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+      <a class="brand" href="#/">
+        <div class="brand-logo">
+          <span class="logo-mark" id="logo-mark"></span>
+          <div>
+            <span class="brand-name">ENGLISH<br>BRAIN</span>
+          </div>
+        </div>
+      </a>
+
+      <div class="nav-label">TODAY</div>
+      <nav class="nav-list" id="nav-main">
+        <a class="nav-item" href="#/" data-route="home"><span class="ico" data-icon="home"></span>英语日常</a>
+        <a class="nav-item" href="#/labs" data-route="labs"><span class="ico" data-icon="lab"></span>练习场</a>
+              </nav>
+
+      <div class="nav-label">TOOLS</div>
+      <nav class="nav-list" id="nav-tools">
+        <a class="nav-item" href="#/dictionary" data-route="dictionary"><span class="ico" data-icon="dictionary"></span>英英词典</a>
+                <a class="nav-item" href="#/notebook" data-route="notebook"><span class="ico" data-icon="notebook"></span>我的英语</a>
+      </nav>
+
+
+      <div class="side-foot">
+        <button class="side-link" id="open-settings" type="button"><span data-icon="settings"></span>设置</button>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar" id="topbar">
+        <button class="icon-btn" id="nav-toggle" type="button" aria-label="Open navigation" data-icon="menu"></button>
+        <a class="brand-name" href="#/">ENGLISH BRAIN</a>
+        <a class="icon-btn" href="#/dictionary" aria-label="Dictionary" data-icon="search"></a>
+      </header>
+
+      <main class="view" id="view" tabindex="-1">
+        <noscript>
+          <div class="panel">
+            <h1>JAVASCRIPT REQUIRED</h1>
+            <p>这个训练场需要 JavaScript。请启用后刷新。</p>
+          </div>
+        </noscript>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast-stack" aria-live="polite" aria-atomic="true"></div>
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>
