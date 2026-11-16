@@ -90,7 +90,7 @@ Requirements:
 - variations and fullParagraph must be academic in tone: claims, evidence, concessions, definitions, comparisons, and explanations.
 - The site's source links are Wikipedia, TED, Reddit, HuffPost, Engadget, Quora and Coursera. The reading seed comes from the supplied Wikipedia source; the other tasks may draw topics from those sources.
 - Every Chinese field must be Chinese; every English field must be natural English.
-- reading.words must have exactly 4 items and their "w" must appear in reading.text. For each reading word, include 2-4 forms of its family (verb, noun, adjective, adverb where possible) and 2-4 collocations.
+- reading.words must have exactly 4 different items (no duplicate base words) and their "w" must appear in reading.text. For each reading word, include 2-4 forms of its family (verb, noun, adjective, adverb where possible) and 2-4 collocations.
 - word.forms must have 3-5 items covering different parts of speech where possible.
 - idioms must have exactly 4 items, all different, and appropriate for a learner to understand before using.
 - builtIn must have exactly 2 items.

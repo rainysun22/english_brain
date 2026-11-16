@@ -154,8 +154,19 @@ function guessBoxHTML(reading, word, revealed, verdict = "", lastGuess = "") {
   </div>`;
 }
 
+function dedupeReading(reading) {
+  const seen = new Set();
+  const words = (reading.words || []).filter((w) => {
+    const key = String(w.base || w.w || "").toLowerCase().trim();
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  return words.length === (reading.words || []).length ? reading : { ...reading, words };
+}
+
 function labReading() {
-  const reading = READINGS[new Date().getDate() % READINGS.length];
+  const reading = dedupeReading(READINGS[new Date().getDate() % READINGS.length]);
   const done = new Set(
     (getState().labStats.reading?.done || [])
       .filter((w) => reading.words.some((x) => x.w.toLowerCase() === String(w).toLowerCase()))
@@ -186,7 +197,7 @@ function labReading() {
 }
 
 function initReading() {
-  let reading = READINGS[new Date().getDate() % READINGS.length];
+  let reading = dedupeReading(READINGS[new Date().getDate() % READINGS.length]);
   let done = new Set(
     (getState().labStats.reading?.done || [])
       .filter((w) => reading.words.some((x) => x.w.toLowerCase() === String(w).toLowerCase()))
