@@ -764,7 +764,7 @@ function labFullVariations() {
   const par = FULL_PARAGRAPHS[0];
   const draftId = "autosave-full-" + (par.id || par.title);
   const saved = getState().notebook.drafts.find((d) => d.id === draftId);
-  return `${labHead("full-variations", `<span class="badge purple">FORGET THE FORM</span>`)}
+  return `${labHead("full-variations", "")}
   <div class="lab-layout">
     <div class="lab-main">
       <div class="panel">
