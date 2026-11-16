@@ -414,7 +414,7 @@ function labIdioms() {
     ${page < pageCount ? `<a class="btn sm ghost" href="${pageHref(page + 1)}">NEXT →</a>` : `<span class="tiny muted">NEXT →</span>`}
   </div>` : "";
 
-  return `${labHead("idioms", `<span class="badge pink">${all.length} IDIOMS IN LIBRARY</span>`)}
+  return `${labHead("idioms", "")}
   <div class="lab-layout">
     <div class="lab-main">
       <div class="panel">
