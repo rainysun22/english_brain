@@ -840,6 +840,15 @@ function initFullVariations() {
 
 /* ================================ 7. DICTATION ================================ */
 
+function dictationHistoryHTML() {
+  const rows = (getState().dictationHistory || []).slice(0, 12);
+  if (!rows.length) return `<div class="tiny muted">No checks yet. 每次 CHECK 后会记录百分比。</div>`;
+  return `<div class="dict-history">${rows.map((r) => {
+    const when = r.at ? new Date(r.at).toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }) : "";
+    return `<div class="dict-history-row"><span class="tiny muted">${esc(r.clip || "DICTATION")} · S${r.sentence || "?"} · ${esc(when)}</span><b style="color:${r.pct >= 85 ? "var(--green)" : "var(--yellow)"}">${r.pct}%</b></div>`;
+  }).join("")}</div>`;
+}
+
 function labDictation() {
   const clip = DICTATION_CLIPS[0];
   return `${labHead("dictation", "")}
@@ -876,6 +885,10 @@ function labDictation() {
           <button class="btn sm ghost" id="dict-clear">CLEAR</button>
         </div>
         <div id="dict-result" class="mt-12"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title"><span class="sq" style="background:var(--cyan)"></span>CHECK HISTORY // 猜对百分比</div>
+        <div id="dict-history">${dictationHistoryHTML()}</div>
       </div>
     </div>
     ${labSide("dictation", { method: false })}
@@ -945,6 +958,10 @@ function initDictation() {
       <div class="diff">${tokens}</div>
       <div class="score-line"><span class="score">${diff.pct}%</span><div class="flex1"><div class="progress ${diff.pct >= 80 ? "" : "yellow"}"><i style="width:${diff.pct}%"></i></div><div class="tiny muted mt-4">${diff.hit}/${diff.total} words matched against sentence ${idx + 1}</div></div></div>
       <details class="mt-12"><summary class="small" style="cursor:pointer;color:var(--cyan)">SHOW SOURCE TEXT</summary><div class="sentence-item mt-8" style="white-space:pre-wrap">${esc(expected)}</div></details>`;
+    const record = { clip: clip.title, sentence: idx + 1, pct: diff.pct, hit: diff.hit, total: diff.total, at: new Date().toISOString() };
+    update((s) => { s.dictationHistory = [record, ...(s.dictationHistory || [])].slice(0, 50); });
+    const history = qs("#dict-history");
+    if (history) history.innerHTML = dictationHistoryHTML();
     if (diff.pct < 85) {
       addPhrase({ text: expected, note: `dictation ${diff.pct}%`, source: "dictation" });
     }

@@ -1653,6 +1653,9 @@ input[type="range"] { accent-color: #8EAC7F; }
 .mini-action .ico,
 .mini-action .ico svg { color: var(--icon-color); }
 
+.dict-history { display: grid; gap: 6px; }
+.dict-history-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 7px 9px; background: var(--panel-2); border: 1px solid var(--line-soft); }
+
 /* global AI bot */
 .ai-bot { position: fixed; right: 22px; bottom: 22px; z-index: 120; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
 .ai-bot-fab { display: inline-flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--purple); color: #F6F0FA; border: 2px solid var(--line); box-shadow: var(--shadow); font-family: var(--pixel); font-size: 12px; letter-spacing: .06em; }

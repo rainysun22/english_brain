@@ -12,6 +12,7 @@ export const DEFAULT_STATE = {
   lastLab: null,
   descScenes: [],
   writingPrompts: [],
+  dictationHistory: [],
   completedLessons: {},
   visitedLabs: {},
   labStats: {},
