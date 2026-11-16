@@ -96,19 +96,70 @@ Requirements:
 - builtIn must have exactly 2 items.
 - Difficulty should be challenging but doable; do not make the passage childish.`;
 
-export async function getOrGenerateDaily(env, day, { force = false } = {}) {
+const MATERIAL_SOURCES = {
+  wikipedia: { label: "Wikipedia", url: "https://en.wikipedia.org/", style: "An academic encyclopedia entry adapted into a TOEFL reading." },
+  ted: { label: "TED", url: "https://www.ted.com/", style: "A TED-talk style explanation: one speaker presents an idea, examples, and a takeaway." },
+  reddit: { label: "Reddit", url: "https://www.reddit.com/", style: "A thoughtful Reddit discussion or campus thread with several viewpoints." },
+  huffpost: { label: "HuffPost", url: "https://www.huffpost.com/", style: "A HuffPost-style human-interest feature about an academic or social issue." },
+  engadget: { label: "Engadget", url: "https://www.engadget.com/", style: "An Engadget-style technology feature about an innovation and its implications." },
+  quora: { label: "Quora", url: "https://www.quora.com/", style: "A Quora-style question and expert answer that explains a concept clearly." },
+  coursera: { label: "Coursera", url: "https://www.coursera.org/", style: "A Coursera lecture: an instructor explains a concept with a concrete example." },
+  mixed: { label: "Mixed sources", url: "", style: "Choose one coherent source voice from Wikipedia, TED, Reddit, HuffPost, Engadget, Quora, or Coursera." },
+};
+
+const MATERIAL_RANGES = {
+  toefl: {
+    label: "new TOEFL iBT academic",
+    style: "Use academic reading, campus listening, speaking, and academic-discussion/integrated-writing tasks across natural science, social science, and humanities.",
+    topics: ["Plate tectonics", "Animal communication", "Urban ecology", "Ancient trade", "Memory", "Photosynthesis", "Economic incentives", "Language acquisition", "Volcanology", "Social networks"],
+  },
+  science: {
+    label: "natural sciences",
+    style: "Focus on biology, ecology, geology, astronomy, physics, or environmental science.",
+    topics: ["Plate tectonics", "Animal communication", "Photosynthesis", "Volcanology", "Urban ecology", "Memory", "Astronomy", "Ocean currents"],
+  },
+  social: {
+    label: "social sciences",
+    style: "Focus on psychology, sociology, economics, education, or urban studies.",
+    topics: ["Economic incentives", "Social networks", "Language acquisition", "Urban planning", "Memory", "Consumer behavior", "Education policy", "Group behavior"],
+  },
+  humanities: {
+    label: "humanities and history",
+    style: "Focus on history, art, architecture, literature, archaeology, or music.",
+    topics: ["Ancient trade", "Museum history", "Printing", "Architecture", "Archaeology", "Art history", "Oral storytelling", "Ancient cities"],
+  },
+  campus: {
+    label: "campus life",
+    style: "Focus on university life: courses, libraries, dorms, study groups, advising, campus events, and student services.",
+    topics: ["University library", "Student housing", "Campus food", "Study groups", "Academic advising", "Campus events", "Student clubs", "Commuting to campus"],
+  },
+  business: {
+    label: "business and technology",
+    style: "Focus on business, economics, technology, innovation, and their social effects.",
+    topics: ["Startups", "Supply chains", "Consumer behavior", "Advertising", "Artificial intelligence", "Remote work", "Product design", "Digital privacy"],
+  },
+};
+
+export async function getOrGenerateDaily(env, day, { force = false, source = "mixed", range = "toefl" } = {}) {
+  const sourceMeta = MATERIAL_SOURCES[source] || MATERIAL_SOURCES.mixed;
+  const rangeMeta = MATERIAL_RANGES[range] || MATERIAL_RANGES.toefl;
+  const config = `${source}|${range}`;
   const cached = getMaterial("daily", day);
-  if (cached && !force) return { material: cached.body, source: "cache", createdAt: cached.created_at };
+  if (cached && !force && cached.body?.materialConfig === config) {
+    return { material: cached.body, source: "cache", createdAt: cached.created_at };
+  }
   const key = env.DEEPSEEK_API_KEY;
   if (!key) {
     const err = new Error("AI_NOT_CONFIGURED");
     err.code = "AI_NOT_CONFIGURED";
     throw err;
   }
-  const seed = await getWikiSeed();
+  const useWikiSeed = source === "wikipedia" || source === "mixed";
+  const seed = useWikiSeed ? await getWikiSeed(range) : null;
+  const rangeHint = `MATERIAL RANGE: ${rangeMeta.label}. ${rangeMeta.style}`;
   const sourceHint = seed
-    ? `Use this real source as the factual seed. Adapt it, do not copy it verbatim.\nSOURCE: ${seed.title}\nURL: ${seed.url}\nSUMMARY: ${seed.extract}`
-    : "No live source was available. Use a general-interest topic and set sourceName to 'Wikipedia' with a plausible topic URL.";
+    ? `${rangeHint}\nSOURCE VOICE: ${sourceMeta.style}\nUse this real source as the factual seed. Adapt it, do not copy it verbatim.\nSOURCE: ${seed.title}\nURL: ${seed.url}\nSUMMARY: ${seed.extract}`
+    : `${rangeHint}\nSOURCE VOICE: ${sourceMeta.style}\nNo live source API is required. Write in this source voice. Set reading.sourceName to "${sourceMeta.label}" and reading.sourceUrl to "${sourceMeta.url}".`;
   let data;
   try {
     data = await callDeepSeek(env, key, [
@@ -123,13 +174,17 @@ export async function getOrGenerateDaily(env, day, { force = false } = {}) {
   if (seed) {
     pack.reading.sourceName = "Wikipedia";
     pack.reading.sourceUrl = seed.url;
+  } else {
+    pack.reading.sourceName = sourceMeta.label;
+    pack.reading.sourceUrl = sourceMeta.url;
   }
+  pack.materialConfig = config;
   putMaterial("daily", day, "Daily material " + day, pack);
   return { material: pack, source: "ai", createdAt: new Date().toISOString() };
 }
 
-async function getWikiSeed() {
-  const topics = ["Plate tectonics", "Animal communication", "Urban ecology", "Ancient trade", "Memory", "Photosynthesis", "Economic incentives", "Language acquisition", "Volcanology", "Social networks"];
+async function getWikiSeed(range = "toefl") {
+  const topics = (MATERIAL_RANGES[range] || MATERIAL_RANGES.toefl).topics;
   const topic = topics[Math.floor(Math.random() * topics.length)];
   try {
     const res = await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(topic), {

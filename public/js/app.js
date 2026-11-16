@@ -205,6 +205,35 @@ function openSettings() {
           <option value="deepseek-reasoner" ${st.settings.model === "deepseek-reasoner" ? "selected" : ""}>deepseek-reasoner — slower, deeper feedback</option>
         </select>
       </div>
+      <div class="field">
+        <label>MATERIAL SOURCE</label>
+        <select class="select" id="set-material-source">
+          ${[
+            ["mixed", "混合来源"],
+            ["wikipedia", "Wikipedia"],
+            ["ted", "TED"],
+            ["reddit", "Reddit"],
+            ["huffpost", "HuffPost"],
+            ["engadget", "Engadget"],
+            ["quora", "Quora"],
+            ["coursera", "Coursera"],
+          ].map(([v, label]) => `<option value="${v}" ${(st.settings.materialSource || "mixed") === v ? "selected" : ""}>${label}</option>`).join("")}
+        </select>
+      </div>
+      <div class="field">
+        <label>MATERIAL RANGE</label>
+        <select class="select" id="set-material-range">
+          ${[
+            ["toefl", "新托福综合学术"],
+            ["science", "自然科学"],
+            ["social", "社会科学"],
+            ["humanities", "人文历史"],
+            ["campus", "校园生活"],
+            ["business", "商业科技"],
+          ].map(([v, label]) => `<option value="${v}" ${(st.settings.materialRange || "toefl") === v ? "selected" : ""}>${label}</option>`).join("")}
+        </select>
+        <div class="hint">下一份材料生效；刷新页面后重新生成。</div>
+      </div>
       ${status}
       <div class="row gap-8 mt-12">
         <button class="btn sm ghost" id="test-ai" type="button">${icon("bolt", "", 14)} TEST CONNECTION</button>
@@ -235,6 +264,12 @@ function openSettings() {
         setSettings({ theme });
         qsa("[data-theme-choice], .theme-swatch", root).forEach((x) => x.classList.toggle("active", x === b));
       });
+      qs("#set-material-source", root).onchange = (e) => {
+        setSettings({ materialSource: e.target.value });
+      };
+      qs("#set-material-range", root).onchange = (e) => {
+        setSettings({ materialRange: e.target.value });
+      };
       const iconInput = qs("#set-icon-color", root);
       if (iconInput) iconInput.oninput = () => {
         applyIconColor(iconInput.value);

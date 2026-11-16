@@ -27,6 +27,8 @@ export const DEFAULT_STATE = {
     theme: "purple",
     themeColor: "#B7A2D8",
     iconColor: "#DDC38D",
+    materialSource: "mixed",
+    materialRange: "toefl",
     model: "deepseek-chat",
     ttsRate: 0.92,
     reduceMotion: false,

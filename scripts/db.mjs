@@ -163,6 +163,8 @@ export function blankState() {
       theme: "purple",
       themeColor: "#B7A2D8",
       iconColor: "#DDC38D",
+      materialSource: "mixed",
+      materialRange: "toefl",
       model: "deepseek-chat",
       ttsRate: 0.92,
       serverConfigured: false,
@@ -231,6 +233,8 @@ export function loadState() {
     if (r.key === "theme") state.settings.theme = r.value || "purple";
     if (r.key === "themeColor") state.settings.themeColor = r.value || "#B7A2D8";
     if (r.key === "iconColor") state.settings.iconColor = r.value || "#DDC38D";
+    if (r.key === "materialSource") state.settings.materialSource = r.value || "mixed";
+    if (r.key === "materialRange") state.settings.materialRange = r.value || "toefl";
     if (r.key === "lastLab") { try { state.lastLab = JSON.parse(r.value); } catch { state.lastLab = null; } }
     if (r.key === "descScenes") { try { state.descScenes = JSON.parse(r.value) || []; } catch { state.descScenes = []; } }
     if (r.key === "writingPrompts") { try { state.writingPrompts = JSON.parse(r.value) || []; } catch { state.writingPrompts = []; } }
@@ -310,6 +314,8 @@ export function saveState(state) {
     setSetting.run("theme", state.settings?.theme || "purple");
     setSetting.run("themeColor", state.settings?.themeColor || "#B7A2D8");
     setSetting.run("iconColor", state.settings?.iconColor || "#DDC38D");
+    setSetting.run("materialSource", state.settings?.materialSource || "mixed");
+    setSetting.run("materialRange", state.settings?.materialRange || "toefl");
     setSetting.run("lastLab", JSON.stringify(state.lastLab || null));
     setSetting.run("descScenes", JSON.stringify(state.descScenes || []));
     setSetting.run("writingPrompts", JSON.stringify(state.writingPrompts || []));

@@ -96,7 +96,10 @@ const server = http.createServer(async (req, res) => {
       }
       try {
         const force = url.searchParams.get("refresh") === "1" || url.searchParams.get("force") === "1";
-        const out = await getOrGenerateDaily(env, day, { force });
+        const st = loadState();
+        const source = st.settings?.materialSource || "mixed";
+        const range = st.settings?.materialRange || "toefl";
+        const out = await getOrGenerateDaily(env, day, { force, source, range });
         res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" });
         return res.end(JSON.stringify({ ...out, day }));
       } catch (err) {
