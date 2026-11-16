@@ -842,7 +842,7 @@ function initFullVariations() {
 
 function labDictation() {
   const clip = DICTATION_CLIPS[0];
-  return `${labHead("dictation", `<span class="badge blue">ONE CLIP · DEEP LISTEN</span>`)}
+  return `${labHead("dictation", "")}
   <div class="lab-layout">
     <div class="lab-main">
       <div class="panel">
