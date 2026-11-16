@@ -149,6 +149,7 @@ export function blankState() {
     descScenes: [],
     writingPrompts: [],
     dictationHistory: [],
+    articles: [],
     completedLessons: {},
     visitedLabs: {},
     labStats: {},
@@ -234,6 +235,7 @@ export function loadState() {
     if (r.key === "descScenes") { try { state.descScenes = JSON.parse(r.value) || []; } catch { state.descScenes = []; } }
     if (r.key === "writingPrompts") { try { state.writingPrompts = JSON.parse(r.value) || []; } catch { state.writingPrompts = []; } }
     if (r.key === "dictationHistory") { try { state.dictationHistory = JSON.parse(r.value) || []; } catch { state.dictationHistory = []; } }
+    if (r.key === "articles") { try { state.articles = JSON.parse(r.value) || []; } catch { state.articles = []; } }
   }
   return state;
 }
@@ -312,6 +314,7 @@ export function saveState(state) {
     setSetting.run("descScenes", JSON.stringify(state.descScenes || []));
     setSetting.run("writingPrompts", JSON.stringify(state.writingPrompts || []));
     setSetting.run("dictationHistory", JSON.stringify(state.dictationHistory || []));
+    setSetting.run("articles", JSON.stringify(state.articles || []));
 
     db.prepare("INSERT OR REPLACE INTO meta (key, value) VALUES ('version', ?)").run("1");
     db.exec("COMMIT");

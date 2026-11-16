@@ -13,6 +13,7 @@ export const DEFAULT_STATE = {
   descScenes: [],
   writingPrompts: [],
   dictationHistory: [],
+  articles: [],
   completedLessons: {},
   visitedLabs: {},
   labStats: {},

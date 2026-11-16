@@ -25,6 +25,34 @@ function finishPractice(id) {
   if (markPracticeDone(id)) toast("今日打卡成功 ✓", "good", 3500);
 }
 
+function articleHistoryHTML(kind) {
+  const list = (getState().articles || []).filter((a) => a.kind === kind).slice(0, 12);
+  if (!list.length) return `<div class="tiny muted">还没有保存的文章。写完离开输入框或完成 AI CHECK 后会自动保存。</div>`;
+  return `<div class="article-history">${list.map((a) => {
+    const when = a.at ? new Date(a.at).toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }) : "";
+    return `<details class="article-item"><summary><span>${esc(a.title || "Untitled")}</span><span class="tiny muted">${a.words || 0} WORDS · ${esc(when)}</span></summary><div class="article-text">${esc(a.text || "")}</div></details>`;
+  }).join("")}</div>`;
+}
+
+function saveArticle(kind, title, prompt, text) {
+  const body = String(text || "").trim();
+  if (!body) return;
+  update((s) => {
+    const entry = {
+      id: kind + "-" + Date.now(),
+      kind,
+      title: title || "Untitled",
+      prompt: prompt || "",
+      text: body,
+      words: wordCount(body),
+      at: new Date().toISOString(),
+    };
+    s.articles = [entry, ...(s.articles || []).filter((a) => !(a.kind === kind && a.title === entry.title))].slice(0, 60);
+  });
+  const box = qs(`[data-article-history="${kind}"]`);
+  if (box) box.innerHTML = articleHistoryHTML(kind);
+}
+
 function autoSaveText(input, buildEntry) {
   let timer = null;
   const save = () => {
@@ -1062,6 +1090,10 @@ function labDescription() {
           <button class="btn sm ghost" id="desc-read">${icon("sound", "", 13)} READ MINE</button>
         </div>
       </div>
+      <div class="panel">
+        <div class="panel-title"><span class="sq" style="background:var(--cyan)"></span>SAVED DESCRIPTIONS // 回看</div>
+        <div data-article-history="description">${articleHistoryHTML("description")}</div>
+      </div>
     </div>
     ${labSide("description", { method: false })}
   </div>
@@ -1074,7 +1106,9 @@ function initDescription() {
   const text = qs("#desc-text");
   const count = qs("#desc-count");
   const updateCount = () => { count.textContent = `${wordCount(text.value)} WORDS`; };
+  const snapshot = () => saveArticle("description", scene.title, scene.prompt, text.value);
   text.addEventListener("input", updateCount);
+  text.addEventListener("blur", snapshot);
   updateCount();
   const paint = () => {
     qs("#desc-scene").innerHTML = sceneHTML(scene);
@@ -1094,6 +1128,7 @@ function initDescription() {
     };
     const picker = qs("#desc-scene-select");
     if (picker) picker.onchange = () => {
+      snapshot();
       if (picker.value === "__base") {
         scene = DESC_SCENES[0];
       } else {
@@ -1110,6 +1145,7 @@ function initDescription() {
         toast("AI 未连接，先在设置中配置 DeepSeek Key。", "bad");
         return;
       }
+      snapshot();
       b.disabled = true;
       b.textContent = "GENERATING...";
       try {
@@ -1169,7 +1205,7 @@ Return ONLY valid JSON, no code fence:
     words: wordCount(body),
   };
   });
-  window.__labCleanup = () => { if (rec) { try { rec.stop(); } catch {} } stopSpeak(); };
+  window.__labCleanup = () => { snapshot(); if (rec) { try { rec.stop(); } catch {} } stopSpeak(); };
   bindLabAI(() => [{
     role: "user",
     content: `Description-practice feedback.\nScene: ${scene.title} (${scene.en})\nPrompt: ${scene.prompt}\nLearner description:\n${text.value || "(empty)"}\n\nEvaluate three layers: concrete detail, personal feeling, and inference/story. Point out where the description is generic, give one more precise adjective or verb, and ask one question that pushes the learner to go deeper. Do not rewrite the whole description.`,
@@ -1249,6 +1285,10 @@ function labWriting() {
         </div>
         <div id="write-result" class="mt-12"></div>
       </div>
+      <div class="panel">
+        <div class="panel-title"><span class="sq" style="background:var(--cyan)"></span>SAVED WRITING // 回看</div>
+        <div data-article-history="writing">${articleHistoryHTML("writing")}</div>
+      </div>
     </div>
     ${labSide("writing", { method: false })}
   </div>
@@ -1264,8 +1304,10 @@ function initWriting() {
   text.addEventListener("input", updateCount);
   updateCount();
 
+  const snapshot = () => saveArticle("writing", prompt.title, prompt.desc, text.value);
   const persistCurrent = () => {
     if (!text.value.trim()) return;
+    snapshot();
     saveDraft({
       id: writingDraftId(prompt),
       title: prompt.title + " · " + new Date().toLocaleDateString("zh-CN"),
@@ -1372,12 +1414,13 @@ Return ONLY valid JSON, no code fence:
     words: wordCount(body),
   }));
 
+  text.addEventListener("blur", snapshot);
   qs("#write-read").onclick = () => {
     if (!text.value.trim()) { toast("Write something first.", "bad"); return; }
     speak(text.value.slice(0, 1600));
   };
 
-  window.__labCleanup = () => stopSpeak();
+  window.__labCleanup = () => { snapshot(); stopSpeak(); };
 }
 
 /* ================================ INIT DISPATCH ================================ */
