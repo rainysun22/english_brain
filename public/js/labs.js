@@ -754,14 +754,14 @@ function bindVariationPanel(set) {
     try {
       const reply = await streamAI([{
         role: "user",
-        content: `Sentence variation feedback.
-Original: ${set.original}
-Core information: ${set.info}
-Learner variations:
+        content: `句子变化批改。请用中文讲解，英文只用于引用原句、引用学生变体和给出例句。
+原句：${set.original}
+核心信息：${set.info}
+学生变体：
 ${lines.join("\n")}
 
-For each variation: say whether the core meaning survived, name the structure/function used, and note the tone shift. Flag any version that changes a promise into a request (or vice versa). Give one additional variation the learner did not try. Keep it under 250 words.`,
-      }], { mode: "sentence", maxTokens: 900 });
+请逐条说明：1) 核心意思是否保留；2) 使用了什么结构和功能；3) 语气发生了什么变化；4) 给一个更自然的英文例句或改写例句。注意标出把承诺改成请求、或把请求改成承诺的情况。最后额外给一个学生没试过的英文变体。控制在 400 字以内。`,
+      }], { system: "你是英语句式教练。必须用中文讲解，英文只用于引用和例句。", mode: "sentence", maxTokens: 900 });
       const model = set.builtIn?.length
         ? `<div class="mt-16"><div class="tiny muted">REFERENCE // 答案例句</div>${set.builtIn.map((v) => `<div class="variant"><div class="v-en">${esc(v.text)}</div><div class="v-note">${esc(v.note)}</div></div>`).join("")}</div>`
         : "";
@@ -867,8 +867,8 @@ function bindFull(par) {
     try {
       const reply = await streamAI([{
         role: "user",
-        content: `Paragraph-rewrite feedback.\nOriginal:\n${par.original}\n\nRequired facts: ${par.facts.join("; ")}\n\nLearner rewrite:\n${body}\n\nCheck three things: (1) are all key facts kept, (2) is the wording genuinely different rather than synonym-swapping, (3) does it read like one story. Give a short diagnosis, then fix only the sentence where the facts drift. Do not rewrite the whole paragraph. Keep it concise and practical.`,
-      }], { mode: "writing", maxTokens: 900 });
+        content: `段落重写批改。请用中文讲解，英文只用于引用原文、引用学生重写和给出例句或改写句。\n原文：\n${par.original}\n\n必须保留的事实：${par.facts.join("; ")}\n\n学生重写：\n${body}\n\n请检查：1) 关键事实是否保留；2) 措辞是否真正改写，而不是简单换同义词；3) 是否读起来像一段连贯的叙述。先用中文给简短诊断，再只针对事实漂移的句子给出英文修改例句。不要重写整段。控制在 400 字以内。`,
+      }], { system: "你是英语段落写作教练。必须用中文讲解，英文只用于引用和例句。", mode: "writing", maxTokens: 900 });
       result.innerHTML = `<div class="prose" style="font-size:13px">${renderMD(reply)}</div>`;
       snapshot();
       qs("#full-translation")?.classList.remove("hidden");
@@ -1432,8 +1432,8 @@ Return ONLY valid JSON, no code fence:
     try {
       const reply = await streamAI([{
         role: "user",
-        content: `Writing feedback. Keep the learner's voice.\nPrompt: ${prompt.title} — ${prompt.desc}\nFocus: ${(prompt.focus || []).join("; ")}\nAI check rules (revision checklist):\n${CHECKLIST_WRITING.map((c, i) => (i + 1) + ". " + c).join("\n")}\nDraft:\n${text.value}\n\nFor each checklist rule: say pass/fix and give one concrete example from the draft. Then give (1) one thing that works, (2) the three most useful fixes, (3) a revised version of only the weakest paragraph, (4) one short follow-up. Do not rewrite the whole piece.`,
-      }], { mode: "writing", maxTokens: 1100 });
+        content: `写作批改。请用中文讲解，英文只用于引用草稿和给出例句或改写句。\n题目：${prompt.title} — ${prompt.desc}\n关注点：${(prompt.focus || []).join("; ")}\n修订清单：\n${CHECKLIST_WRITING.map((c, i) => (i + 1) + ". " + c).join("\n")}\n草稿：\n${text.value}\n\n请逐条用中文说明“通过 / 需要修改”，并用英文给出一个具体的修改例句。然后给出：1) 一个写得好的地方；2) 三个最值得修改的问题，每个都配英文例句；3) 只改写最弱的一段；4) 一个简短的下一步练习。不要替学生整篇重写。控制在 500 字以内。`,
+      }], { system: "你是英语写作教练。必须用中文讲解，英文只用于引用和例句。", mode: "writing", maxTokens: 1100 });
       result.innerHTML = `<div class="prose" style="font-size:12px">${renderMD(reply)}</div>`;
       finishPractice("writing");
       award(8, "AI writing check");
