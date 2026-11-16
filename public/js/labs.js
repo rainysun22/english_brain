@@ -27,7 +27,7 @@ function finishPractice(id) {
 
 function articleHistoryHTML(kind) {
   const list = (getState().articles || []).filter((a) => a.kind === kind).slice(0, 12);
-  if (!list.length) return `<div class="tiny muted">还没有保存的文章。写完离开输入框或完成 AI CHECK 后会自动保存。</div>`;
+  if (!list.length) return "";
   return `<div class="article-history">${list.map((a) => {
     const when = a.at ? new Date(a.at).toLocaleString("zh-CN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }) : "";
     return `<details class="article-item"><summary><span>${esc(a.title || "Untitled")}</span><span class="tiny muted">${a.words || 0} WORDS · ${esc(when)}</span></summary><div class="article-text">${esc(a.text || "")}</div></details>`;
