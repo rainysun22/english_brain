@@ -1167,7 +1167,7 @@ function writingOptionsHTML(prompt) {
 }
 
 function writingSelectHTML(prompt) {
-  return `<select class="select" id="writing-prompt-select" style="width:auto;max-width:260px">${writingOptionsHTML(prompt)}</select>`;
+  return `<select class="select material-day" id="writing-prompt-select" aria-label="选择写作题目" title="切换写作题目">${writingOptionsHTML(prompt)}</select>`;
 }
 
 function writingDraftId(prompt) {
