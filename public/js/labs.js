@@ -218,6 +218,10 @@ function labReading() {
         <div id="reading-translation" class="passage-translation ${done.size === reading.words.length ? "" : "hidden"}">${esc(reading.translation)}</div>
       </div>
       <div id="reading-guess" class="panel">${guessBoxHTML(reading, first, false)}</div>
+      <div class="panel">
+        <div class="panel-title"><span class="sq" style="background:var(--cyan)"></span>SAVED CONTEXT GUESSES // 回看</div>
+        <div data-article-history="reading">${articleHistoryHTML("reading")}</div>
+      </div>
     </div>
     ${labSide("reading", { method: false })}
   </div>
@@ -318,6 +322,15 @@ function initReading() {
         const opt = qs("[data-material-day]")?.selectedOptions?.[0];
         if (opt && !opt.textContent.startsWith("✓")) opt.textContent = "✓ " + opt.textContent;
       }
+      const record = [
+        `WORD: ${w.w}${w.base && w.base !== w.w ? " (" + w.base + ")" : ""}`,
+        `MY GUESS: ${guess || "(none)"}`,
+        `RESULT: ${verdict || "revealed"}`,
+        `MEANING: ${w.en}`,
+        `中文: ${w.zh}`,
+        `EXAMPLE: ${w.example}`,
+      ].join("\n");
+      saveArticle("reading", `${reading.title} · ${w.w}`, reading.title, record);
       award(3, "context guess");
       paint();
     };
@@ -578,6 +591,10 @@ function labFourWord() {
         <div id="fw-result" class="mt-12"></div>
       </div>
       <div class="panel">
+        <div class="panel-title"><span class="sq" style="background:var(--cyan)"></span>SAVED FOUR-WORD // 回看</div>
+        <div data-article-history="four-word">${articleHistoryHTML("four-word")}</div>
+      </div>
+      <div class="panel">
         <div class="panel-title"><span class="sq" style="background:var(--cyan)"></span>规则</div>
         <div class="variant"><div class="v-en">All four words must appear in one grammatical sentence.</div><div class="v-note">顺序随便，词形可改，但语法和意思必须成立。太轻松就加词。</div></div>
         <div class="variant"><div class="v-en">If it isn't difficult, then you're not doing it right.</div><div class="v-note">这些词你见过；现在的任务是把它们从“认识”变成“调得出来”。</div></div>
@@ -663,7 +680,10 @@ function initFourWord() {
       <div class="word-check">${words.map((w) => `<span class="${hasWord(textBody, w) ? "yes" : "no"}">${esc(w)} ${hasWord(textBody, w) ? "✓" : "×"}</span>`).join("")}</div>
       <div class="tiny mt-8">${missing.length ? "Missing: " + missing.join(", ") : "Now check: is the sentence grammatical, and does it make sense?"}</div>
     </div>`;
-    if (textBody) saveDraft({ title: "Four words: " + words.join(", "), text: textBody, prompt: words.join(", "), words: wc });
+    if (textBody) {
+      saveDraft({ title: "Four words: " + words.join(", "), text: textBody, prompt: words.join(", "), words: wc });
+      saveArticle("four-word", "Four words: " + words.join(", "), "Four-word sentence", textBody);
+    }
     if (!missing.length) {
       finishPractice("four-word");
       award(8, "four-word");
@@ -706,6 +726,10 @@ function labVariations() {
         </div>
         <div id="var-panel" class="mt-16">${variationHTML(set)}</div>
       </div>
+      <div class="panel">
+        <div class="panel-title"><span class="sq" style="background:var(--cyan)"></span>SAVED VARIATIONS // 回看</div>
+        <div data-article-history="variations">${articleHistoryHTML("variations")}</div>
+      </div>
     </div>
     ${labSide("variations", { method: false })}
   </div>
@@ -717,7 +741,9 @@ function bindVariationPanel(set) {
   const count = qs("#var-count");
   const result = qs("#var-result");
   const update = () => { count.textContent = `${text.value.split(/\n+/).filter((x) => x.trim()).length} lines`; };
+  const snapshot = () => saveArticle("variations", set.original, set.zh, text.value);
   text.addEventListener("input", update);
+  text.addEventListener("blur", snapshot);
   update();
   qs("#var-check").onclick = async () => {
     const lines = text.value.split(/\n+/).map((x) => x.trim()).filter(Boolean);
@@ -740,6 +766,7 @@ For each variation: say whether the core meaning survived, name the structure/fu
         ? `<div class="mt-16"><div class="tiny muted">REFERENCE // 答案例句</div>${set.builtIn.map((v) => `<div class="variant"><div class="v-en">${esc(v.text)}</div><div class="v-note">${esc(v.note)}</div></div>`).join("")}</div>`
         : "";
       result.innerHTML = `<div class="prose" style="font-size:13px">${renderMD(reply)}</div>${model}`;
+      snapshot();
       if (lines.length >= set.target) {
         finishPractice("variations");
         award(10, "variations");
@@ -750,6 +777,8 @@ For each variation: say whether the core meaning survived, name the structure/fu
       btn.disabled = false;
     }
   };
+
+  window.__labCleanup = () => snapshot();
 
   bindLabAI(() => [{
     role: "user",
@@ -799,6 +828,10 @@ function labFullVariations() {
         <div class="row between wrap gap-8"><div><div class="tiny muted">PARAGRAPH REWRITE</div><h3 style="font-size:18px">读懂，忘掉，重写</h3></div></div>
         <div id="full-panel" class="mt-16">${fullHTML(par, saved?.text || "")}</div>
       </div>
+      <div class="panel">
+        <div class="panel-title"><span class="sq" style="background:var(--cyan)"></span>SAVED PARAGRAPHS // 回看</div>
+        <div data-article-history="full-variations">${articleHistoryHTML("full-variations")}</div>
+      </div>
     </div>
     ${labSide("full-variations", { method: false })}
   </div>
@@ -809,7 +842,9 @@ function bindFull(par) {
   const text = qs("#full-text");
   const count = qs("#full-count");
   const updateCount = () => { count.textContent = `${wordCount(text.value)} WORDS`; };
+  const snapshot = () => saveArticle("full-variations", par.title, par.original, text.value);
   text.addEventListener("input", updateCount);
+  text.addEventListener("blur", snapshot);
   updateCount();
   qs("#full-hide").onclick = () => {
     const p = qs("#full-panel .passage");
@@ -835,6 +870,7 @@ function bindFull(par) {
         content: `Paragraph-rewrite feedback.\nOriginal:\n${par.original}\n\nRequired facts: ${par.facts.join("; ")}\n\nLearner rewrite:\n${body}\n\nCheck three things: (1) are all key facts kept, (2) is the wording genuinely different rather than synonym-swapping, (3) does it read like one story. Give a short diagnosis, then fix only the sentence where the facts drift. Do not rewrite the whole paragraph. Keep it concise and practical.`,
       }], { mode: "writing", maxTokens: 900 });
       result.innerHTML = `<div class="prose" style="font-size:13px">${renderMD(reply)}</div>`;
+      snapshot();
       qs("#full-translation")?.classList.remove("hidden");
       finishPractice("full-variations");
       award(10, "full variation");
@@ -852,6 +888,8 @@ function bindFull(par) {
     prompt: "full variation",
     words: wordCount(body),
   }));
+  window.__labCleanup = () => snapshot();
+
   bindLabAI(() => [{
     role: "user",
     content: `Paragraph-rewrite feedback.\nOriginal:\n${par.original}\n\nRequired facts: ${par.facts.join("; ")}\n\nLearner rewrite:\n${text.value || "(empty)"}\n\nCheck three things: (1) are all key facts kept, (2) is the wording genuinely different rather than synonym-swapping, (3) does it read like one story. Give a short diagnosis, then fix only the sentence where the facts drift. Do not rewrite the whole paragraph.`,
