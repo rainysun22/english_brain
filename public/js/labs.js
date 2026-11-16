@@ -669,7 +669,7 @@ function variationHTML(set) {
 
 function labVariations() {
   const set = VARIATION_SETS[0];
-  return `${labHead("variations", `<span class="badge cyan">MEANING STAYS · TONE MOVES</span>`)}
+  return `${labHead("variations", "")}
   <div class="lab-layout">
     <div class="lab-main">
       <div class="panel">
