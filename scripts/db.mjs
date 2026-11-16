@@ -160,7 +160,7 @@ export function blankState() {
     settings: {
       theme: "purple",
       themeColor: "#B7A2D8",
-      iconColor: "#CDB7E6",
+      iconColor: "#DDC38D",
       model: "deepseek-chat",
       ttsRate: 0.92,
       serverConfigured: false,
@@ -228,7 +228,7 @@ export function loadState() {
     if (r.key === "ttsRate") state.settings.ttsRate = Number(r.value) || 0.92;
     if (r.key === "theme") state.settings.theme = r.value || "purple";
     if (r.key === "themeColor") state.settings.themeColor = r.value || "#B7A2D8";
-    if (r.key === "iconColor") state.settings.iconColor = r.value || "#CDB7E6";
+    if (r.key === "iconColor") state.settings.iconColor = r.value || "#DDC38D";
     if (r.key === "lastLab") { try { state.lastLab = JSON.parse(r.value); } catch { state.lastLab = null; } }
     if (r.key === "descScenes") { try { state.descScenes = JSON.parse(r.value) || []; } catch { state.descScenes = []; } }
     if (r.key === "writingPrompts") { try { state.writingPrompts = JSON.parse(r.value) || []; } catch { state.writingPrompts = []; } }
@@ -305,7 +305,7 @@ export function saveState(state) {
     setSetting.run("ttsRate", String(state.settings?.ttsRate ?? 0.92));
     setSetting.run("theme", state.settings?.theme || "purple");
     setSetting.run("themeColor", state.settings?.themeColor || "#B7A2D8");
-    setSetting.run("iconColor", state.settings?.iconColor || "#CDB7E6");
+    setSetting.run("iconColor", state.settings?.iconColor || "#DDC38D");
     setSetting.run("lastLab", JSON.stringify(state.lastLab || null));
     setSetting.run("descScenes", JSON.stringify(state.descScenes || []));
     setSetting.run("writingPrompts", JSON.stringify(state.writingPrompts || []));

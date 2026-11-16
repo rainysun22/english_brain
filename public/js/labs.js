@@ -1089,14 +1089,14 @@ function initDescription() {
           .map((x) => x.title + " / " + x.en).join("; ");
         const reply = await streamAI([{
           role: "user",
-          content: `Create one life-like description scene for a Chinese B1-B2 English learner. Use an ordinary city-life setting such as a kitchen, bus stop, laundromat, convenience store, park bench, bakery, pharmacy, gym, or office kitchen. Avoid fantasy or grand landscapes.
+          content: `Create one TOEFL speaking-style description scene for a Chinese B1-B2 English learner. Use a campus or academic setting such as a lecture hall, library study area, science lab, campus café, dorm study room, museum exhibit, or advising office. Avoid casual errands and fantasy scenes.
 
 It MUST be clearly different from the current scene and recent scenes: ${recent}. Do not reuse the same type of place, the same central activity, or the same set of people.
 
 Return ONLY valid JSON, no code fence:
-{"title":"短中文场景","en":"A SHORT SCENE NAME IN ENGLISH (2-5 words, not a description)","look":["4 specific observation prompts in English"],"feel":["2 feeling prompts in English"],"guess":["3 inference prompts in English"],"prompt":"one Chinese instruction for describing this scene, no time limit"}`,
+{"title":"短中文场景","en":"A SHORT SCENE NAME IN ENGLISH (2-5 words, not a description)","look":["4 specific observation prompts in English for a TOEFL speaking response"],"feel":["2 interpretation prompts in English"],"guess":["3 inference prompts in English"],"prompt":"one Chinese instruction for a TOEFL speaking-style description of this academic scene"}`,
         }], {
-          system: "You generate varied, concrete, everyday description-practice scenes. Return only valid JSON. The en field must be a short scene label of 2-5 words, never a full description.",
+          system: "You generate TOEFL speaking-style campus and academic description scenes. Return only valid JSON. The en field must be a short scene label of 2-5 words, never a full description.",
           mode: "writing",
           maxTokens: 650,
           temperature: 0.95,
@@ -1286,14 +1286,14 @@ function initWriting() {
         .map((x) => x.title + " / " + x.en).join("; ");
       const reply = await streamAI([{
         role: "user",
-        content: `Create one life-like writing prompt for a Chinese B1-B2 English learner. It should be a short real-life text the learner might actually write: a message, a note, a small plan, a complaint, a recommendation, or a diary entry. Avoid fantasy, academic essays, and business reports.
+        content: `Create one new-TOEFL-style writing prompt for a Chinese B1-B2 English learner. It should practise either a TOEFL academic discussion (a professor's question and a short opinion task) or an integrated writing task (a short reading/listening claim and a response). Use academic topics, not personal notes or casual messages.
 
 It MUST be clearly different from the current prompt and recent prompts: ${recent}. Do not reuse the same situation or the same central task.
 
 Return ONLY valid JSON, no code fence:
-{"title":"短中文题目","en":"ENGLISH PROMPT NAME","desc":"one Chinese description of the writing task","starter":"two or three English sentence starters separated by /","focus":["3 specific writing focus points in Chinese"],"color":"yellow|pink|cyan|green"}`,
+{"title":"短中文题目","en":"TOEFL WRITING PROMPT NAME","desc":"one Chinese description of the TOEFL academic discussion or integrated writing task","starter":"two or three English sentence starters separated by /","focus":["3 specific TOEFL writing focus points in Chinese"],"color":"yellow|pink|cyan|green"}`,
       }], {
-        system: "You generate varied, concrete, everyday writing prompts. Return only valid JSON.",
+        system: "You generate TOEFL academic-discussion and integrated-writing prompts. Return only valid JSON.",
         mode: "writing",
         maxTokens: 700,
         temperature: 0.9,

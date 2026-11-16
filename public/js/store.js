@@ -24,7 +24,7 @@ export const DEFAULT_STATE = {
   settings: {
     theme: "purple",
     themeColor: "#B7A2D8",
-    iconColor: "#CDB7E6",
+    iconColor: "#DDC38D",
     model: "deepseek-chat",
     ttsRate: 0.92,
     reduceMotion: false,

@@ -172,7 +172,7 @@ function applyTheme(theme, color) {
 }
 
 function applyIconColor(color) {
-  const value = /^#[0-9a-f]{6}$/i.test(String(color || "")) ? color : "#CDB7E6";
+  const value = /^#[0-9a-f]{6}$/i.test(String(color || "")) ? color : "#DDC38D";
   document.documentElement.style.setProperty("--icon-color", value);
 }
 
@@ -194,8 +194,8 @@ function openSettings() {
       <div class="field">
         <label>ICON COLOR</label>
         <label class="theme-swatch" title="自定义图标颜色" style="width:max-content">
-          <i style="background:${esc(st.settings.iconColor || "#CDB7E6")}"></i>选择颜色
-          <input type="color" id="set-icon-color" value="${esc(st.settings.iconColor || "#CDB7E6")}">
+          <i style="background:${esc(st.settings.iconColor || "#DDC38D")}"></i>选择颜色
+          <input type="color" id="set-icon-color" value="${esc(st.settings.iconColor || "#DDC38D")}">
         </label>
       </div>
       <div class="field">
@@ -513,14 +513,14 @@ async function boot() {
     const pack = await fetchDailyMaterial();
     if (pack) applyMaterialPack(pack);
   }
-  const history = await fetchMaterialHistory();
-  if (history.length) {
-    setMaterialHistory(history);
+  const materialHistory = await fetchMaterialHistory();
+  if (materialHistory.length) {
+    setMaterialHistory(materialHistory);
     applyLatestMaterial();
   }
   setIdiomLibrary(await fetchIdiomLibrary());
 
-  if (!location.hash) history.replaceState(null, "", "#/");
+  if (!location.hash) window.history.replaceState(null, "", "#/");
   await render();
   setTimeout(() => qs("#boot")?.classList.add("done"), 250);
   setTimeout(() => qs("#boot")?.remove(), 650);

@@ -1,6 +1,6 @@
 import { getMaterial, putMaterial } from "./db.mjs";
 
-const DAILY_PROMPT = `You are designing one day of English practice material for a Chinese learner at B1-B2 level.
+const DAILY_PROMPT = `You are designing one day of new-TOEFL-style English practice material for a Chinese learner at B1-B2 level.
 
 Return ONLY valid JSON. No markdown fence, no commentary. Use exactly this structure:
 
@@ -8,7 +8,7 @@ Return ONLY valid JSON. No markdown fence, no commentary. Use exactly this struc
   "reading": {
     "title": "SHORT ENGLISH TITLE",
     "zh": "短中文标题",
-    "text": "80-120 word English passage, natural, one clear topic. Include the 4 target words below exactly.",
+    "text": "110-150 word TOEFL-style academic reading passage, one clear topic from natural science, social science, history, or humanities. Include the 4 target words below exactly.",
     "translation": "完整中文翻译",
     "sourceName": "Wikipedia",
     "sourceUrl": "https://en.wikipedia.org/wiki/...",
@@ -17,7 +17,7 @@ Return ONLY valid JSON. No markdown fence, no commentary. Use exactly this struc
     ]
   },
   "word": {
-    "word": "one useful English word from the passage",
+    "word": "one useful academic English word from the passage",
     "ipa": "/.../",
     "zh": "中文",
     "core": "simple all-English definition",
@@ -31,20 +31,20 @@ Return ONLY valid JSON. No markdown fence, no commentary. Use exactly this struc
     "zh": "短中文标题",
     "level": "EASY|MEDIUM|HARD",
     "note": "one short note about what is hard to hear",
-    "sentences": ["3 English sentences, 8-18 words each, natural speech"]
+    "sentences": ["3 English sentences from a TOEFL-style lecture or campus conversation, 8-20 words each, natural academic speech"]
   },
   "description": {
     "title": "短中文场景",
-    "en": "SCENE IN ENGLISH",
+    "en": "TOEFL SPEAKING SCENE IN ENGLISH",
     "look": ["4 specific observation prompts in English"],
     "feel": ["2 feeling prompts in English"],
     "guess": ["3 inference prompts in English"],
-    "prompt": "one Chinese instruction for describing this scene, with no time limit"
+    "prompt": "one Chinese instruction for a TOEFL speaking-style description of this campus or academic scene, with no time limit"
   },
   "writing": {
     "title": "短中文题目",
-    "en": "ENGLISH PROMPT NAME",
-    "desc": "one Chinese description of the writing task",
+    "en": "TOEFL WRITING PROMPT NAME",
+    "desc": "one Chinese description of a TOEFL academic-discussion or integrated-writing task",
     "starter": "two or three English sentence starters separated by /",
     "focus": ["3 specific writing focus points in Chinese"]
   },
@@ -62,7 +62,7 @@ Return ONLY valid JSON. No markdown fence, no commentary. Use exactly this struc
     }
   ],
   "variations": {
-    "original": "one English sentence with a clear function (promise, request, observation, etc.)",
+    "original": "one English sentence with a clear academic function (claim, concession, recommendation, cause, contrast, etc.)",
     "zh": "中文翻译",
     "info": "the information points that must not change, in Chinese",
     "target": 4,
@@ -72,7 +72,7 @@ Return ONLY valid JSON. No markdown fence, no commentary. Use exactly this struc
   },
   "fullParagraph": {
     "title": "SHORT TITLE",
-    "original": "one 5-7 sentence English paragraph with a clear little story",
+    "original": "one 5-7 sentence TOEFL-style academic paragraph explaining a concept or presenting a small study",
     "zh": "完整中文翻译",
     "facts": ["6-8 key facts that must be kept, in simple English"],
     "model": "one model rewrite in English",
@@ -81,12 +81,13 @@ Return ONLY valid JSON. No markdown fence, no commentary. Use exactly this struc
 }
 
 Requirements:
-- Make the material feel like ordinary daily life for a young adult in a city: commuting, coffee, groceries, neighbors, apartment, office, gym, family chat, phone, weather, small plans. Avoid abstract encyclopedia-only topics and grand historical summaries.
-- The reading may use the supplied Wikipedia seed as a factual starting point, but it must connect that topic to a concrete everyday situation, decision, or small story.
-- description must be a familiar, real-life scene (for example a kitchen, bus stop, laundromat, convenience store, park bench), not a fantasy landscape.
-- writing must ask for a short real-life text the learner might actually write: a message, a short note, a small plan, a complaint, a recommendation, or a diary entry.
-- dictation sentences must sound like natural everyday speech, not textbook announcements.
-- variations and fullParagraph must be about ordinary people in ordinary situations.
+- All content must feel like new TOEFL iBT preparation material: academic reading, campus listening, integrated speaking, and academic discussion or integrated writing. Avoid casual diary entries, personal errands, and everyday small talk as the main task.
+- Reading must be an academic exposition with a clear main idea, supporting details, and a cause-effect or comparison structure. It may use the supplied Wikipedia seed but must read like a TOEFL passage, not an encyclopedia summary.
+- description must use a TOEFL speaking-style campus or academic scene such as a lecture hall, library study area, science lab, campus café, dorm study room, museum exhibit, or advising office. description.en must be a short scene label of 2-6 words, never a full sentence; put details in look, feel, guess, and prompt.
+- writing must be a TOEFL academic-discussion prompt (a professor's question plus a short task) or an integrated-writing task. The learner should practise stating and supporting an academic opinion, not writing a personal note.
+- dictation must sound like a TOEFL lecture or campus conversation, with academic vocabulary and natural connected speech.
+- idioms should be academic collocations or idiomatic academic phrases useful in TOEFL speaking and writing (for example "shed light on", "play a role in", "raise a concern"). Do not use casual slang.
+- variations and fullParagraph must be academic in tone: claims, evidence, concessions, definitions, comparisons, and explanations.
 - The site's source links are Wikipedia, TED, Reddit, HuffPost, Engadget, Quora and Coursera. The reading seed comes from the supplied Wikipedia source; the other tasks may draw topics from those sources.
 - Every Chinese field must be Chinese; every English field must be natural English.
 - reading.words must have exactly 4 items and their "w" must appear in reading.text. For each reading word, include 2-4 forms of its family (verb, noun, adjective, adverb where possible) and 2-4 collocations.
@@ -128,7 +129,7 @@ export async function getOrGenerateDaily(env, day, { force = false } = {}) {
 }
 
 async function getWikiSeed() {
-  const topics = ["Coffee", "Public library", "Bicycle", "Farmers market", "Neighbourhood", "Laundry", "Cooking", "Apartment", "Bus", "Sleep"];
+  const topics = ["Plate tectonics", "Animal communication", "Urban ecology", "Ancient trade", "Memory", "Photosynthesis", "Economic incentives", "Language acquisition", "Volcanology", "Social networks"];
   const topic = topics[Math.floor(Math.random() * topics.length)];
   try {
     const res = await fetch("https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(topic), {
