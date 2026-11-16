@@ -513,7 +513,7 @@ function fourWordsHTML(words, source, hint) {
 function labFourWord() {
   const pool = notebookWordPool();
   if (pool.length < 4) {
-    return `${labHead("four-word", `<span class="badge orange">${pool.length}/4 WORDS</span>`)}
+    return `${labHead("four-word", "")}
     <div class="empty">
       <strong>四词练习只从「我的英语」取词</strong>
       <p class="muted">你现在有 ${pool.length} 个词。阅读猜对后点「标熟」，或在「我的英语」里把词标熟；攒够 4 个熟词再回来。</p>
