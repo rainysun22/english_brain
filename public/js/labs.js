@@ -172,7 +172,7 @@ function labReading() {
       .filter((w) => reading.words.some((x) => x.w.toLowerCase() === String(w).toLowerCase()))
   );
   const first = reading.words[0]?.w || "";
-  return `${labHead("reading", `<span class="badge green" data-reading-done>${done.size}/${reading.words.length} DONE</span>`)}
+  return `${labHead("reading", "")}
   <div class="lab-layout">
     <div class="lab-main">
       <div class="panel">
